@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    volumes:
+      - ./db-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpsw
+      MYSQL_DATABASE: school
+      MYSQL_USER: user
+      MYSQL_PASSWORD: userpsw
+    ports:
+      - "3306:3306"

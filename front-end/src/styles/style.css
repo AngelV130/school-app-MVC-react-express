@@ -1,4 +1,4 @@
-body {
+.bodyLogging {
     margin: 0;
     font-family: 'Arial', sans-serif;
     background: linear-gradient(45deg, #EEBD47 15%, transparent 15%) 0 0,
@@ -13,3 +13,7 @@ body {
     justify-content: center;
     height: 100vh;
   }
+
+.bg-amarillo-personalizado {
+  background-color: #EEBD47;
+}
