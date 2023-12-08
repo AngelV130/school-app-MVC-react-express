@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom';
 import {
   flexRender,
@@ -48,8 +48,11 @@ const DebouncedInput = ({ value: keyWord, onChange, ...props }) => {
   )
 }
 
-const DataTable = () => {
+const DataTable = React.memo(() => {
   const [statModificar,setStatModificar] = useState(false)
+  const refCalificaiones = useRef([])
+  const focusCalificaiones = useRef()
+  const [refCalificaion,setRefCalificaion] = useState([])
   const [data, setData] = useState([])
   const {id} = useParams()
   const [globalFilter, setGlobalFilter] = useState('')
@@ -64,6 +67,30 @@ const DataTable = () => {
       const result = await res.json()
       setData(result.data)
       console.log(result)
+      console.log("result")
+    } catch (error) {
+        
+    }
+  }
+
+  const guardarCalificaciones =  async () =>{
+    console.log(refCalificaiones,refCalificaiones.length)
+    if (refCalificaiones == null || refCalificaiones.length == 0){
+      console.log("No hay data")
+      return 
+    }
+    try {
+      const res = await fetch("http://localhost:3000/api/calificaciones/"+id,{method:"POST",
+      body:{
+        data:JSON.stringify(refCalificaiones)
+      },
+      headers:{
+        'Content-Type': 'application/json',
+        }})
+      const result = await res.json()
+      setData(result.data)
+      console.log(result)
+      console.log("result")
     } catch (error) {
         
     }
@@ -100,10 +127,54 @@ const DataTable = () => {
     {
       accessorKey: 'CalificacionAlumno',
       header: 'Calificacion',
-      cell: info => statModificar ? 
-      <span className='font-bold'><input type="text" className='w-full bg-transparent border p-2' value={info.getValue()} /></span>
-      :
-      <span className='font-bold'><input type="text" className='w-full bg-transparent p-2' disabled value={info.getValue()} /></span>,
+      cell: info => {
+        console.log(info.row.original.IdUsers)
+        if(!statModificar){
+          // const indiceElemento = refCalificaion.findIndex(item => item.IdAlumno === info.row.original.IdUsers);
+          // if (indiceElemento !== -1) {
+          //   // El elemento con el id existe, modificarlo
+          //   refCalificaion[indiceElemento].Calificacion = info.getValue();
+          // } else {
+          //   // El elemento con el id no existe, agregarlo
+          //   const nuevoElemento = { IdAlumno: info.row.original.IdUsers, Calificacion: info.getValue() };
+          //   refCalificaion.push(nuevoElemento)
+          // }
+          return <span className='font-bold'>{info.getValue()}</span>
+
+        }
+        // setRefCalificaion(info.getValue())
+        // const elementoEncontrado = refCalificaion.find(item => item.IdAlumno === info.row.original.IdUsers);
+        let val = 1
+        // if(elementoEncontrado == undefined){
+        //   refCalificaiones.current.value = info.getValue();
+        //   val = refCalificaiones.current.value
+        // }else{
+        //   val = elementoEncontrado.Calificacion
+        // }
+        return <span className='font-bold'><input value={val}
+            // onChange={(e)=>{
+            //   // console.log(e.target.i``)
+            //   // focusCalificaiones.current = e.target
+
+            //   setTimeout(()=>{
+            //     console.log("Focus")
+            //     e.target.focus()
+            //   },10000)
+            //   const indiceElemento = refCalificaion.findIndex(item => item.IdAlumno === info.row.original.IdUsers);
+
+            //   if (indiceElemento !== -1) {
+            //     // El elemento con el id existe, modificarlo
+            //     const nuevosDatos = [...refCalificaion];
+            //     nuevosDatos[indiceElemento].Calificacion = e.target.value;
+            //     setRefCalificaion(nuevosDatos);
+            //   } else {
+            //     // El elemento con el id no existe, agregarlo
+            //     const nuevoElemento = { IdAlumno: info.row.original.IdUsers, Calificacion: e.target.value };
+            //     setRefCalificaion(prevDatos => [...prevDatos, nuevoElemento]);
+            //   }
+            // }}
+            type="text" className='w-full bg-transparent border p-2 text-center' /></span>
+      },
       enableSorting: false
     }
   ]
@@ -157,15 +228,27 @@ const DataTable = () => {
             className='px-6 py-2 text-gray-600 border border-gray-300 rounded outline-indigo-700'
             placeholder='Buscar...'
           />
-
-          <button onClick={(e)=>{
-              setStatModificar(!statModificar)
-            }} className="mr-1 ml-1 flex items-center bg-blue-500 text-white px-4 py-2 rounded focus:outline-none focus:shadow-outline-yellow flex-col">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
-            </svg>
-            Modificar
-          </button>
+          {
+            !statModificar ? 
+              <button onClick={(e)=>{
+                setStatModificar(true)
+              }} className="mr-1 ml-1 flex items-center bg-blue-500 text-white px-4 py-2 rounded focus:outline-none focus:shadow-outline-yellow flex-col">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+              </svg>
+              Modificar
+            </button>
+            :
+            <button onClick={(e)=>{
+                guardarCalificaciones()
+                setStatModificar(false)
+              }} className="mr-1 ml-1 flex items-center bg-blue-500 text-white px-4 py-2 rounded focus:outline-none focus:shadow-outline-yellow flex-col">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9" />
+              </svg>
+              Guardar
+            </button>
+          }
           {/* <MagnifyingGlassIcon className='w-5 h-5 absolute top-3 left-1' /> */}
             <button onClick={(e)=>{
               window.open("http://localhost:3000/api/generar-pdf/"+id, '_blank');
@@ -286,6 +369,6 @@ const DataTable = () => {
       </div>
     </div>
   )
-}
+})
 
 export default DataTable

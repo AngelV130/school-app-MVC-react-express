@@ -35,6 +35,7 @@ app.get('/curso/:idCurso', ControllerCursos.curso);
 
 // Calificaciones
 app.get('/calificaciones/:id?', ControllerCalificaciones.index);
+app.post('/calificaciones/:id?', ControllerCalificaciones.insert);
 
 
 

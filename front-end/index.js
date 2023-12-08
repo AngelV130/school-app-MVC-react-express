@@ -12,10 +12,10 @@ app.use(json())
 app.use((req,res,next)=>{
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.header('Access-Control-Allow-Origin', '*')
-    corsMiddleware()
+    // corsMiddleware()
     next()
 })
-app.disable('x-powered-by')
+// app.disable('x-powered-by')
 
 
 app.use('/api', to_do)

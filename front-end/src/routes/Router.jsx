@@ -8,7 +8,8 @@ import Curso from "../pages/Curso";
 import Notificaciones from "../pages/Notificaciones";
 import Mensajes from "../pages/Mensajes";
 import Configuracion from "../pages/Configuracion";
-import Calificaciones from "../pages/Calificaciones";
+// import Calificaciones from "../pages/Calificaciones";
+import Calificaciones from "../pages/Calificaciones2";
 import Register from "../pages/Register";
 
 // Layouts
